@@ -11,6 +11,7 @@ class Post extends Model
 {
     use HasFactory;
 
+    protected $fillable=['user_id' , 'category_id' , 'title' , ' content' , 'slug'];
 
     /**
      * The tags that belong to the Post
@@ -30,5 +31,15 @@ class Post extends Model
     public function images(): HasMany
     {
         return $this->hasMany(Image::class);
+    }
+
+    /**
+     * Get the user that owns the Post
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 }

@@ -10,6 +10,8 @@ class Tag extends Model
 {
     use HasFactory;
 
+    protected $fillable=['name'];
+
     /**
      * The roles that belong to the Tag
      *
