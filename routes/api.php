@@ -62,7 +62,7 @@ Route::group(['middleware' =>['jwt.verify' , 'auth.guard:user-api'],
 
 
 });
-Route::get('tags.posts',[TagController::class ,'tagPosts' ]);
+
 
 
 

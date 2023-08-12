@@ -88,12 +88,6 @@ class TagController extends Controller
 
 
 
-    public function tagPosts(Tag $tag)
-    {
 
-        $posts = $tag->posts;
-        dd($posts);
-        return response()->json(['message'=>null,'data'=>$posts],200);
-    }
 
 }
