@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\TagController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\ImageController;
 use App\Http\Controllers\Api\PostTagController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\Admin\AuthController;
@@ -74,6 +75,15 @@ Route::group(['middleware' =>['jwt.verify' , 'auth.guard:user-api'],
           Route::post('/post.tags/{id}' , [PostTagController::class , 'addTagsForPost']);
           Route::post('/post.tag/{id}' , [PostTagController::class , 'deleteTagForPost']);
           Route::get('/post.tags/{id}' , [PostTagController::class , 'show']);
+
+        /**************     Image Routes    *************/
+        Route::get('/images', [ImageController::class, 'index']);
+         Route::get('/image/{id}' , [ImageController::class , 'show']);
+         Route::post('/images' , [ImageController::class , 'store']);
+         Route::post('/images/{id}' , [ImageController::class , 'update']);
+         Route::post('/image/{id}' , [ImageController::class , 'destroy']);
+
+
 });
 
 
