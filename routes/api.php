@@ -2,8 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\Api\TagController;
+use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\PostTagController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\Admin\AuthController;
 
@@ -60,7 +63,17 @@ Route::group(['middleware' =>['jwt.verify' , 'auth.guard:user-api'],
         Route::post('/tags/{id}' , [TagController::class , 'update']);
         Route::post('/tag/{id}' , [TagController::class , 'destroy']);
 
+         /**************     Post Routes    *************/
+         Route::get('/posts', [PostController::class, 'index']);
+         Route::get('/post/{id}' , [PostController::class , 'show']);
+         Route::post('/posts' , [PostController::class , 'store']);
+         Route::post('/posts/{id}' , [PostController::class , 'update']);
+         Route::post('/post/{id}' , [PostController::class , 'destroy']);
 
+          /**************     Post Tag Routes    *************/
+          Route::post('/post.tags/{id}' , [PostTagController::class , 'addTagsForPost']);
+          Route::post('/post.tag/{id}' , [PostTagController::class , 'deleteTagForPost']);
+          Route::get('/post.tags/{id}' , [PostTagController::class , 'show']);
 });
 
 

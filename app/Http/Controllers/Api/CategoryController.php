@@ -78,7 +78,7 @@ class CategoryController extends Controller
         if($category) {
 
             $category->delete($id);
-            return $this->apiResponse(new CategoryResource($category), 'the category deleted successfuly', 200);
+            return $this->apiResponse(null ,'the category deleted successfuly', 200);
         }
 
         return $this->apiResponse(null, 'the category not found', 404);

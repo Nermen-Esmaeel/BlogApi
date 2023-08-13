@@ -78,7 +78,7 @@ class TagController extends Controller
         if($tag) {
 
             $tag->delete($id);
-            return $this->apiResponse(new TagResource($tag), 'the tag deleted successfuly', 200);
+            return $this->apiResponse( null,'the tag deleted successfuly', 200);
         }
 
         return $this->apiResponse(null, 'the tag not found', 404);
