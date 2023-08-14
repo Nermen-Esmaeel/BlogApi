@@ -15,25 +15,29 @@ use App\Http\Requests\PostStore;
 class PostController extends Controller
 {
     use ApiResponseTrait;
-     //
-     public function index(){
+    //
+    public function index()
+    {
         //fetch all posts from database and store in $posts
-      $posts = PostResource::collection(Post::get());
-        return $this->apiResponse($posts ,'' , 200);
+        $post_list = Post::paginate(5);
+        $posts = PostResource::collection( $post_list);
+        return $this->apiResponse($posts, '', 200);
     }
 
-    public function show($id){
+    public function show($id)
+    {
         //fetch  post from database and store in $posts
 
         $post = Post::find($id);
-        if( $post){
-            return $this->apiResponse(new PostResource($post) ,'ok' , 200);
+        if($post) {
+            return $this->apiResponse(new PostResource($post), 'ok', 200);
         }
-        return $this->apiResponse(null,'the post not found' , 404);
+        return $this->apiResponse(null, 'the post not found', 404);
     }
 
     //store
-    public function store(PostStore $request){
+    public function store(PostStore $request)
+    {
 
         $post = new Post();
         $post->title = $request->title;
@@ -48,34 +52,47 @@ class PostController extends Controller
 
     }
     //update
-    public function update(PostStore $request , $id){
+    public function update(PostStore $request, $id)
+    {
 
         $post = Post::find($id);
 
         if($post) {
-        $post = new Post();
-        $post->title = $request->title;
-        $post->content =$request->content;
-        $post->slug =$request->slug;
-        $post->user_id = Auth::user()->id;
-        $post->category_id = $request->category_id;
-        $post->save();
+            $post = new Post();
+            $post->title = $request->title;
+            $post->content =$request->content;
+            $post->slug =$request->slug;
+            $post->user_id = Auth::user()->id;
+            $post->category_id = $request->category_id;
+            $post->save();
             return $this->apiResponse(new PostResource($post), 'the post update', 201);
         }
         return $this->apiResponse(null, 'the post not found', 404);
     }
 
     //delete
-    public function destroy( $id)
+    public function destroy($id)
     {
         $post = Post::find($id);
         if($post) {
 
             $post->delete($id);
-            return $this->apiResponse(null ,'the post deleted', 200);
+            return $this->apiResponse(null, 'the post deleted', 200);
         }
 
         return $this->apiResponse(null, 'the post not found', 404);
+
+    }
+
+    //search
+    public function search($name)
+    {
+       $result = Post::where("title", "like", "%".$name."%")->get();
+       if(count($result)){
+        return $this->apiResponse($result, 'ok', 201);
+       }else{
+        return $this->apiResponse(null, 'There is no post title it like '.$name , 404);
+       }
 
     }
 }

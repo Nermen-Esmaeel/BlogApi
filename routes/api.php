@@ -83,6 +83,7 @@ Route::group(['middleware' =>['jwt.verify' , 'auth.guard:user-api'],
          Route::post('/images/{id}' , [ImageController::class , 'update']);
          Route::post('/image/{id}' , [ImageController::class , 'destroy']);
 
+         Route::get('/posts/search/{name}' , [PostController::class , 'search']);
 
 });
 
