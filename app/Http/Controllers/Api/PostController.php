@@ -16,11 +16,14 @@ class PostController extends Controller
 {
     use ApiResponseTrait;
     //
-    public function index()
+    public function index(Request $request)
     {
+
+        $post_type = $request->post_type;
         //fetch all posts from database and store in $posts
-        $post_list = Post::paginate(5);
+        $post_list = Post::where('type' , $post_type)->get();
         $posts = PostResource::collection( $post_list);
+        
         return $this->apiResponse($posts, '', 200);
     }
 
@@ -45,6 +48,7 @@ class PostController extends Controller
         $post->slug =$request->slug;
         $post->user_id = Auth::user()->id;
         $post->category_id = $request->category_id;
+        $post->type = $request->type;
         $post->save();
         if($post) {
             return $this->apiResponse(new PostResource($post), 'ok', 201);
@@ -64,6 +68,7 @@ class PostController extends Controller
             $post->slug =$request->slug;
             $post->user_id = Auth::user()->id;
             $post->category_id = $request->category_id;
+            $post->type = $request->type;
             $post->save();
             return $this->apiResponse(new PostResource($post), 'the post update', 201);
         }
@@ -95,4 +100,6 @@ class PostController extends Controller
        }
 
     }
+
+
 }

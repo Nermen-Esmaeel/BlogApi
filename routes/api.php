@@ -9,7 +9,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ImageController;
 use App\Http\Controllers\Api\PostTagController;
 use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\Api\Admin\AuthController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -22,62 +22,55 @@ use App\Http\Controllers\Api\Admin\AuthController;
 |
 */
 
-/**************     Admin Routes    *************/
-Route::group(['prefix' => 'admin'], function($router) {
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth.guard:admin-api' , 'jwt.verify' );
-    Route::post('/refresh', [AuthController::class, 'refresh'])->middleware('auth.guard:admin-api' , 'jwt.verify');
-    Route::get('/user-profile', [AuthController::class, 'userProfile'])->middleware('auth.guard:admin-api' , 'jwt.verify');
-});
 
 
-/**************     User Routes    *************/
+
+
+//  Auth Routes
 Route::prefix('user')->group(function () {
     Route::post('/register', [UserController::class, 'register']);
     Route::post('/login', [UserController::class, 'login']);
+    Route::get('/user-profile', [UserController::class, 'userProfile'])->middleware( 'jwt.verify');
+    Route::post('/logout', [UserController::class, 'logout'])->middleware('jwt.verify' );
+    Route::post('/refresh', [UserController::class, 'refresh'])->middleware('jwt.verify');
+    Route::post('/update-profile/{id}', [UserController::class, 'updateProfile'])->middleware('jwt.verify');
+    Route::post('/change-plan/{id}', [UserController::class, 'changePlan'])->middleware('jwt.verify' , 'isAdmin');
 });
 
 
-Route::group(['prefix' => 'user'], function($router) {
-    Route::get('/user-profile', [UserController::class, 'userProfile'])->middleware('auth.guard:admin-api' , 'jwt.verify');
-    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth.guard:user-api' , 'jwt.verify');
+Route::group([ 'middleware' => 'jwt.verify' ,'prefix' => 'user'],
+    function() {
 
-});
-
-
-Route::group(['middleware' =>['jwt.verify' , 'auth.guard:user-api'],
-    'prefix' => 'user'],
-    function($router) {
-
-        /**************     Categories Routes    *************/
-        Route::get('/categories', [CategoryController::class, 'index']);
+        //Categories Routes  
+        Route::get('/categories', [CategoryController::class, 'index'])->middleware('isAdmin');
         Route::get('/category/{id}' , [CategoryController::class , 'show']);
-        Route::post('/categories' , [CategoryController::class , 'store']);
-        Route::post('/categories/{id}' , [CategoryController::class , 'update']);
-        Route::post('/category/{id}' , [CategoryController::class , 'destroy']);
+        Route::post('/categories' , [CategoryController::class , 'store'])->middleware('isAdmin');
+        Route::post('/categories/{id}' , [CategoryController::class , 'update'])->middleware('isAdmin');
+        Route::post('/category/{id}' , [CategoryController::class , 'destroy'])->middleware('isAdmin');
 
-        /**************     Tags Routes    *************/
+        //Tags Routes  
         Route::get('/tags', [TagController::class, 'index']);
         Route::get('/tag/{id}' , [TagController::class , 'show']);
-        Route::post('/tags' , [TagController::class , 'store']);
-        Route::post('/tags/{id}' , [TagController::class , 'update']);
-        Route::post('/tag/{id}' , [TagController::class , 'destroy']);
+        Route::post('/tags' , [TagController::class , 'store'])->middleware('isAdmin');
+        Route::post('/tags/{id}' , [TagController::class , 'update'])->middleware('isAdmin');
+        Route::post('/tag/{id}' , [TagController::class , 'destroy'])->middleware('isAdmin');
 
-         /**************     Post Routes    *************/
-         Route::get('/posts', [PostController::class, 'index']);
+         //Post Routes  
+         Route::get('/posts', [PostController::class, 'index'])->middleware( 'checkPlan');
          Route::get('/post/{id}' , [PostController::class , 'show']);
-         Route::post('/posts' , [PostController::class , 'store']);
-         Route::post('/posts/{id}' , [PostController::class , 'update']);
-         Route::post('/post/{id}' , [PostController::class , 'destroy']);
+         Route::post('/posts' , [PostController::class , 'store'])->middleware('isAdmin');
+         Route::post('/posts/{id}' , [PostController::class , 'update'])->middleware('isAdmin');
+         Route::post('/post/{id}' , [PostController::class , 'destroy'])->middleware('isAdmin');
 
-          /**************     Post Tag Routes    *************/
+          //Post Tag Routes
           Route::post('/post.tags/{id}' , [PostTagController::class , 'addTagsForPost']);
           Route::post('/post.tag/{id}' , [PostTagController::class , 'deleteTagForPost']);
           Route::get('/post.tags/{id}' , [PostTagController::class , 'show']);
 
-        /**************     Image Routes    *************/
-        Route::get('/images', [ImageController::class, 'index']);
+
+
+        //Image Routes
+         Route::get('/images', [ImageController::class, 'index']);
          Route::get('/image/{id}' , [ImageController::class , 'show']);
          Route::post('/images' , [ImageController::class , 'store']);
          Route::post('/images/{id}' , [ImageController::class , 'update']);
@@ -86,7 +79,5 @@ Route::group(['middleware' =>['jwt.verify' , 'auth.guard:user-api'],
          Route::get('/posts/search/{name}' , [PostController::class , 'search']);
 
 });
-
-
 
 

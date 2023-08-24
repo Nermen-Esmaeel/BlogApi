@@ -13,13 +13,14 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('user_id')->unsigned()->nullable();
-            $table->bigInteger('category_id')->unsigned()->nullable();
+            $table->bigInteger('user_id')->unsigned()->nullable()->index('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->bigInteger('category_id')->unsigned()->nullable()->index('category_id');
+            $table->foreign('category_id')->references('id')->on('catergories')->onUpdate('cascade')->onDelete('cascade');
             $table->string('title');
             $table->longText('content')->nullable();
             $table->string('slug')->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->foreign('category_id')->references('id')->on('catergories')->onUpdate('cascade')->onDelete('cascade');
+            $table->enum('type', ['paid', 'free'])->default('free');
             $table->timestamps();
         });
     }

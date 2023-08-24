@@ -57,6 +57,38 @@ class UserController extends Controller
     return response()->json(auth()->user());
 }
 
+
+
+//update user Profile
+public function updateProfile(Request $request , $id) {
+
+    $input = $request->all();
+    $user = User::find($id);
+
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|string|between:2,100',
+        'email' => 'required|string|email|max:100',
+        'password' => 'nullable|string|min:8',
+    ]);
+    if($validator->fails()){
+        return response()->json($validator->errors()->toJson(), 400);
+    }
+
+        if(!empty($input['password'])){
+        $input['password'] = $input['password'] ;
+        }else{
+        $input = array_except($input,array('password'));
+        }
+        $user->update($input);
+
+        return response()->json([
+            'message' => 'User Updated registered',
+            'user' => $user
+        ], 201);
+    
+}
+
+
     //Create New Token
     protected function createNewToken($token){
         return response()->json([
@@ -67,4 +99,25 @@ class UserController extends Controller
             'user' => auth()->user()
         ]);
     }
+
+    
+//change plan
+public function changePlan(Request $request , $id){
+
+    $user = User::find($id);
+    if($user){
+        $user->subscription_plan = $request->subscription_plan;
+        $user->save();
+
+        return response()->json([
+            'message' => 'Subscription Plan Has Been Changed To '.$user->subscription_plan,
+        ], 201);
+    }
+
+      return response()->json(['data' => null, 'message' => 'the user not found'], 404);
+
+    }
+   
+  
 }
+
