@@ -49,7 +49,7 @@ Route::group([ 'middleware' => 'jwt.verify' ,'prefix' => 'user'],
         Route::post('/category/{id}' , [CategoryController::class , 'destroy'])->middleware('isAdmin');
 
         //Tags Routes  
-        Route::get('/tags', [TagController::class, 'index']);
+        Route::get('/tags', [TagController::class, 'index'])->middleware('isAdmin');
         Route::get('/tag/{id}' , [TagController::class , 'show']);
         Route::post('/tags' , [TagController::class , 'store'])->middleware('isAdmin');
         Route::post('/tags/{id}' , [TagController::class , 'update'])->middleware('isAdmin');
