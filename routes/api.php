@@ -35,6 +35,17 @@ Route::prefix('user')->group(function () {
     Route::post('/refresh', [UserController::class, 'refresh'])->middleware('jwt.verify');
     Route::post('/update-profile/{id}', [UserController::class, 'updateProfile'])->middleware('jwt.verify');
     Route::post('/change-plan/{id}', [UserController::class, 'changePlan'])->middleware('jwt.verify' , 'isAdmin');
+    //soft delete 
+     Route::get('softDelete/{id}', [UserController::class, 'SoftDelete'])->middleware( 'jwt.verify');
+
+     //show trash 
+     Route::get('/trash', [UserController::class, 'trash'])->middleware('jwt.verify' , 'isAdmin');
+     //restore 
+     Route::get('trash/restore/{id}', [UserController::class, 'restore'])->middleware('jwt.verify' , 'isAdmin');
+
+     //Force Delete
+     Route::get('trash/forceDelete/{id}', [UserController::class, 'forceDelete'])->middleware('jwt.verify' , 'isAdmin');
+
 });
 
 

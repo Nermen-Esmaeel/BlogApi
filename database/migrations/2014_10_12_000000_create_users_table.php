@@ -20,6 +20,7 @@ return new class extends Migration
             $table->enum('role', ['user', 'admin', 'super_admin'])->default('user');
             $table->enum('subscription_plan', ['paid', 'free'])->default('free');
             $table->rememberToken();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

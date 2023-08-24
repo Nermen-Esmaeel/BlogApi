@@ -117,7 +117,57 @@ public function changePlan(Request $request , $id){
       return response()->json(['data' => null, 'message' => 'the user not found'], 404);
 
     }
+
+
+    //soft delete
+    public function SoftDelete($id)
+    {
+        $user = User::find($id);
+        $user->delete();
+        return response()->json([
+            'message' => 'user moved to trash',
+        ], 201);
+    }
+
    
-  
+    
+    //show trash
+    public function trash(){
+    {
+        $users = User::onlyTrashed()->orderBy('deleted_at', 'desc')->get();
+        return response()->json([
+            'data' => $users ,
+            'message' => 'ok',
+        ], 201);
+    }
 }
 
+  //restore from trached
+    //function restore return true or false
+    public function restore($id){
+
+        $user = User::find($id);
+        if($user){
+
+            $user = User::onlyTrashed()->where('id' , $id)->first()->restore();
+            return response()->json([ 'message' => 'user restore successfully',], 201);
+        }
+  
+     return response()->json([ 'message' => 'user not  found',], 404);
+    }
+
+
+    
+    //delete forever
+    public function forceDelete($id)
+    {
+        $user = User::onlyTrashed()->find($id);
+        if($user){
+            $user->forcedelete();
+            return response()->json([ 'message' => 'user deleted successfully',], 201);
+
+        }
+        return response()->json([ 'message' => 'user not  found',], 404);
+    }
+
+}
