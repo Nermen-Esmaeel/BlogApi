@@ -28,7 +28,8 @@ class PostStore extends FormRequest
         return [
             'title' => 'required|string|max:100' ,
             'content' => 'required|string|max:600' ,
-            'slug' => 'required|string'
+            'slug' => 'required|string',
+            'type'  => 'required|in:paid,free',
         ];
     }
     public function messages(){
@@ -36,6 +37,7 @@ class PostStore extends FormRequest
              'title.required' => 'Title is required and must not be greater than 100 characters. ' ,
              'content.required' => 'Content is required and must not be greater than 600 characters. ' ,
              'slug.required' => 'slug must be string ' ,
+             'type.in' => 'Subscription Plan  must be paid or free' ,
 
         ];
     }
