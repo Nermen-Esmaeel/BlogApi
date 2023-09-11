@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Post;
+use App\Traits\ApiResponseTrait;
 
 class PostTagController extends Controller
 {
 
+    use ApiResponseTrait;
     //
-
     public function addTagsForPost(Request $request , $id){
         //store post's tags
         $post = $post = Post::find($id);

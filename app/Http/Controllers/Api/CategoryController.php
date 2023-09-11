@@ -7,11 +7,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\CategoryResource;
+use App\Traits\ApiResponseTrait;
 
 class CategoryController extends Controller
 {
 
-
+    use ApiResponseTrait;
 
     public function index(){
         //fetch all categories from database and store in $categories

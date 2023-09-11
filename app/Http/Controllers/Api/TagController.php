@@ -7,15 +7,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\TagResource;
+use App\Traits\ApiResponseTrait;
 
 class TagController extends Controller
 {
 
-
-
-
-
-
+    use ApiResponseTrait;
     public function index(){
         //fetch all tags from database and store in $tags
       $tags = TagResource::collection(Tag::get());

@@ -8,6 +8,7 @@ use App\Http\Requests\ImageStore;
 use App\Models\Image;
 use App\Http\Resources\ImageResource;
 use Illuminate\Support\Facades\File;
+use App\Traits\ApiResponseTrait;
 
 
 class ImageController extends Controller

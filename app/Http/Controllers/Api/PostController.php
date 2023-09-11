@@ -9,11 +9,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\PostResource;
 use App\Http\Requests\PostStore;
+use App\Traits\ApiResponseTrait;
 
 
 
 class PostController extends Controller
 {
+    use ApiResponseTrait;
 
     //
     public function index(Request $request)
