@@ -11,9 +11,6 @@ use App\Http\Resources\CategoryResource;
 class CategoryController extends Controller
 {
 
-    use ApiResponseTrait;
-
-
 
 
     public function index(){

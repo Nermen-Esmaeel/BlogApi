@@ -85,7 +85,7 @@ public function updateProfile(Request $request , $id) {
             'message' => 'User Updated registered',
             'user' => $user
         ], 201);
-    
+
 }
 
 
@@ -100,7 +100,7 @@ public function updateProfile(Request $request , $id) {
         ]);
     }
 
-    
+
 //change plan
 public function changePlan(Request $request , $id){
 
@@ -129,8 +129,8 @@ public function changePlan(Request $request , $id){
         ], 201);
     }
 
-   
-    
+
+
     //show trash
     public function trash(){
     {
@@ -152,12 +152,12 @@ public function changePlan(Request $request , $id){
             $user = User::onlyTrashed()->where('id' , $id)->first()->restore();
             return response()->json([ 'message' => 'user restore successfully',], 201);
         }
-  
+
      return response()->json([ 'message' => 'user not  found',], 404);
     }
 
 
-    
+
     //delete forever
     public function forceDelete($id)
     {

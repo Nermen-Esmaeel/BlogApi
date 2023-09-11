@@ -8,7 +8,7 @@ use App\Models\Post;
 
 class PostTagController extends Controller
 {
-    use ApiResponseTrait;
+
     //
 
     public function addTagsForPost(Request $request , $id){

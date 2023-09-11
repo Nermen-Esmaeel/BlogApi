@@ -11,7 +11,7 @@ use App\Http\Resources\TagResource;
 class TagController extends Controller
 {
 
-    use ApiResponseTrait;
+
 
 
 

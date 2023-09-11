@@ -14,7 +14,7 @@ use App\Http\Requests\PostStore;
 
 class PostController extends Controller
 {
-    use ApiResponseTrait;
+
     //
     public function index(Request $request)
     {
@@ -23,7 +23,7 @@ class PostController extends Controller
         //fetch all posts from database and store in $posts
         $post_list = Post::where('type' , $post_type)->get();
         $posts = PostResource::collection( $post_list);
-        
+
         return $this->apiResponse($posts, '', 200);
     }
 

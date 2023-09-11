@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\File;
 
 class ImageController extends Controller
 {
-    use ApiResponseTrait;
+
     //
 
     public function index(){
