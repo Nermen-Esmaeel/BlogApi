@@ -15,15 +15,16 @@ class PostResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-        //    'id' => $this->id,
+
             'title' => $this->title,
             'content' => $this->content,
-           // 'slug' => $this->slug,
-           // 'type'=> $this->type,
-            //'category_id'=> $this->category_id,
-          //  'writer by'=> new UserResource($this->users),
-            //'created_at' => $this->created_at->format('d/m/Y'),
-           // 'updated_at' => $this->updated_at->format('d/m/Y'),
-        ];
+            'slug' => $this->slug,
+            'type'=> $this->type,
+            'category'=> $this->category_id,
+            'writer by'=> new UserResource($this->users),
+            'created_at' => $this->created_at->format('d/m/Y'),
+            'updated_at' => $this->updated_at->format('d/m/Y'),
+            'images' =>  ImageResource::collection($this->whenLoaded('images')),
+            ];
     }
 }

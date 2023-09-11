@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Catergory;
+use App\Models\{Catergory,Image};
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Resources\CategoryResource;
 use App\Traits\ApiResponseTrait;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
@@ -15,9 +16,9 @@ class CategoryController extends Controller
     use ApiResponseTrait;
 
     public function index(){
+        $categories = Catergory::query();
         //fetch all categories from database and store in $categories
-      $categories = CategoryResource::collection(Catergory::get());
-        return $this->apiResponse($categories ,'' , 200);
+        return $this->apiResponse(CategoryResource::collection( $categories->with(['images'])->get()) ,'' , 200);
     }
 
 
@@ -35,12 +36,27 @@ class CategoryController extends Controller
     public function store(Request $request){
 
         $validator = Validator::make($request->all(), [
-            'title' =>'required|string',
+            'name' =>'required|string',
         ]);
         if($validator->fails()){
             return $this->apiResponse(null, $validator->errors()  , 400);
         }
+
         $category = Catergory::create($request->all());
+
+        if ($request->hasFile('images')) {
+
+            // $path = $this->UploadFile('Article_Covers', $request->file('article_cover'));
+            foreach ($request->file('images') as $image) {
+                $filename = time() . '_' . $image->getClientOriginalName();
+                $path = $image->storeAs('images/category', $filename);
+
+
+                $category->images()->create([
+                    'url' => $path,
+                ]);
+            }
+        }
 
         if($category) {
             return $this->apiResponse(new CategoryResource($category), 'ok', 201);
@@ -63,7 +79,22 @@ class CategoryController extends Controller
         //check if record exist
         $category = Catergory::find($id);
         if($category) {
+
+            //images handling
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    // Storage::disk('public')->delete('Categories/' . $image->image);
+                    $filename = time() . '_' . $image->getClientOriginalName();
+
+                    $path =  $image->storeAs('images/category', $filename);
+
+                    $newImage = new Image(['url' => $path]);
+                    $category->images()->save($newImage);
+                }
+            }
+
             $category->update($request->all());
+
             return $this->apiResponse(new CategoryResource($category), 'the category update successfuly', 201);
         }
         return $this->apiResponse(null, 'the category not found', 404);

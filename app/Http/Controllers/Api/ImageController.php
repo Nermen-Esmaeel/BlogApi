@@ -14,7 +14,8 @@ use App\Traits\ApiResponseTrait;
 class ImageController extends Controller
 {
 
-    //
+    use ApiResponseTrait;
+
 
     public function index(){
 

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Post;
+use App\Models\{Post,Image};
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,7 +23,7 @@ class PostController extends Controller
 
         $post_type = $request->post_type;
         //fetch all posts from database and store in $posts
-        $post_list = Post::where('type' , $post_type)->get();
+        $post_list = Post::where('type' , $post_type)->with(['images'])->get();
         $posts = PostResource::collection( $post_list);
 
         return $this->apiResponse($posts, '', 200);
@@ -33,7 +33,7 @@ class PostController extends Controller
     {
         //fetch  post from database and store in $posts
 
-        $post = Post::find($id);
+        $post = Post::find($id)->with(['images']);
         if($post) {
             return $this->apiResponse(new PostResource($post), 'ok', 200);
         }
@@ -52,6 +52,21 @@ class PostController extends Controller
         $post->category_id = $request->category_id;
         $post->type = $request->type;
         $post->save();
+
+        if ($request->hasFile('images')) {
+
+            // $path = $this->UploadFile('Article_Covers', $request->file('article_cover'));
+            foreach ($request->file('images') as $image) {
+                $filename = time() . '_' . $image->getClientOriginalName();
+                $path = $image->storeAs('images/post', $filename);
+
+
+                $post->images()->create([
+                    'url' => $path,
+                ]);
+            }
+        }
+
         if($post) {
             return $this->apiResponse(new PostResource($post), 'ok', 201);
         }
@@ -64,6 +79,21 @@ class PostController extends Controller
         $post = Post::find($id);
 
         if($post) {
+
+            if ($request->hasFile('images')) {
+
+                foreach ($request->file('images') as $image) {
+                    // Storage::disk('public')->delete('Categories/' . $image->image);
+                    $filename = time() . '_' . $image->getClientOriginalName();
+
+                    $path =  $image->storeAs('images/post', $filename);
+
+                    $newImage = new Image(['url' => $path]);
+                    $post->images()->save($newImage);
+                }
+            }
+
+
             $post = new Post();
             $post->title = $request->title;
             $post->content =$request->content;

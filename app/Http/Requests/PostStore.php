@@ -30,6 +30,7 @@ class PostStore extends FormRequest
             'content' => 'required|string|max:600' ,
             'slug' => 'required|string',
             'type'  => 'required|in:paid,free',
+            'category_id' =>'required',
         ];
     }
     public function messages(){

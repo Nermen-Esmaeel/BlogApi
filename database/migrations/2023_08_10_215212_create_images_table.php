@@ -13,9 +13,8 @@ return new class extends Migration
     {
         Schema::create('images', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('post_id')->unsigned()->nullable();
-            $table->string('fileName');
-            $table->foreign('post_id')->references('id')->on('posts')->onDelete('cascade')->onUpdate('cascade');
+            $table->string('url');
+            $table->morphs('imageable');
             $table->timestamps();
         });
     }

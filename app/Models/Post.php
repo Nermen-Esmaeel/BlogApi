@@ -14,42 +14,27 @@ class Post extends Model
 
     protected $fillable=['user_id' , 'category_id' , 'title' , ' content' , 'slug'];
 
-    /**
-     * The tags that belong to the Post
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
-     */
+
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class, 'posts_tags', 'post_id', 'tag_id')->as('posts_tags');
     }
 
-    /**
-     * Get all of the comments for the Post
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function images(): HasMany
+
+    //morphMany between posts and images
+    public function images()
     {
-        return $this->hasMany(Image::class);
+        return $this->morphMany(Image::class, 'imageable');
     }
 
-    /**
-     * Get the user that owns the Post
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
+
+
     public function categories(): BelongsTo
     {
-        return $this->belongsTo(Category::class , 'category_id' , 'id');
+        return $this->belongsTo(Category::class );
     }
 
 
-     /**
-     * Get the user that owns the Post
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
     public function users(): BelongsTo
     {
         return $this->belongsTo(User::class ,'user_id', 'id');
