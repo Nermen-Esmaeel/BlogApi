@@ -54,13 +54,10 @@ class PostController extends Controller
         $post->save();
 
         if ($request->hasFile('images')) {
-
-            // $path = $this->UploadFile('Article_Covers', $request->file('article_cover'));
             foreach ($request->file('images') as $image) {
-                $filename = time() . '_' . $image->getClientOriginalName();
-                $path = $image->storeAs('images/post', $filename);
 
-
+                //call helpers UploadImage
+                $path = UploadImage('images/Post', $image);
                 $post->images()->create([
                     'url' => $path,
                 ]);
@@ -82,14 +79,20 @@ class PostController extends Controller
 
             if ($request->hasFile('images')) {
 
+
+                //delete old Images from folder
+                foreach ( $post->images as $image){
+
+                    DeleteImageFromStorage($image->url);
+                }
+
                 foreach ($request->file('images') as $image) {
-                    // Storage::disk('public')->delete('Categories/' . $image->image);
-                    $filename = time() . '_' . $image->getClientOriginalName();
 
-                    $path =  $image->storeAs('images/post', $filename);
-
-                    $newImage = new Image(['url' => $path]);
-                    $post->images()->save($newImage);
+                   //call helpers UploadImage
+                    $path = UploadImage('images/Post', $image);
+                    $post->images()->update([
+                        'url' => $path,
+                    ]);
                 }
             }
 
@@ -112,6 +115,16 @@ class PostController extends Controller
     {
         $post = Post::find($id);
         if($post) {
+
+             //check if category have images
+             if ($post->images) {
+                //delete old Images from folder
+                foreach ( $post->images as $image){
+
+                    DeleteImageFromStorage($image->url);
+                    $post->images()->delete();
+                }
+            }
 
             $post->delete($id);
             return $this->apiResponse(null, 'the post deleted', 200);

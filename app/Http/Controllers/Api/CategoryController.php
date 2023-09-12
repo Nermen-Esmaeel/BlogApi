@@ -46,12 +46,10 @@ class CategoryController extends Controller
 
         if ($request->hasFile('images')) {
 
-            // $path = $this->UploadFile('Article_Covers', $request->file('article_cover'));
             foreach ($request->file('images') as $image) {
-                $filename = time() . '_' . $image->getClientOriginalName();
-                $path = $image->storeAs('images/category', $filename);
 
-
+                //call helpers UploadImage
+                $path = UploadImage('images/Category', $image);
                 $category->images()->create([
                     'url' => $path,
                 ]);
@@ -78,21 +76,29 @@ class CategoryController extends Controller
 
         //check if record exist
         $category = Catergory::find($id);
+
         if($category) {
 
             //images handling
             if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    // Storage::disk('public')->delete('Categories/' . $image->image);
-                    $filename = time() . '_' . $image->getClientOriginalName();
 
-                    $path =  $image->storeAs('images/category', $filename);
+                //delete old Images from folder
+                foreach ( $category->images as $image){
 
-                    $newImage = new Image(['url' => $path]);
-                    $category->images()->save($newImage);
+                    DeleteImageFromStorage($image->url);
                 }
-            }
 
+                foreach ($request->file('images') as $image) {
+
+                   //call helpers UploadImage
+                    $path = UploadImage('images/Category', $image);
+                    $category->images()->update([
+                        'url' => $path,
+                    ]);
+                }
+
+
+        }
             $category->update($request->all());
 
             return $this->apiResponse(new CategoryResource($category), 'the category update successfuly', 201);
@@ -103,10 +109,19 @@ class CategoryController extends Controller
     //delete category
     public function destroy( $id)
     {
-        $category = Catergory::find($id);
+        $category = Catergory::findOrFail($id);
         if($category) {
 
-            $category->delete($id);
+            //check if category have images
+            if ($category->images) {
+                //delete old Images from folder
+                foreach ( $category->images as $image){
+
+                    DeleteImageFromStorage($image->url);
+                    $category->images()->delete();
+                }
+            }
+           $category->delete($id);
             return $this->apiResponse(null ,'the category deleted successfuly', 200);
         }
 
